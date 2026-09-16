@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ATHENA · assistant IA personnel</title>
+<meta name="theme-color" content="#040A12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040A12;--panel:#0A1726;--panel2:#0D1D30;--line:#1A3A55;
+  --cyan:#3FE6F6;--orange:#FF8A3D;--amber:#FFC15E;--violet:#8E8CF0;--red:#E0546B;
+  --ink:#DCEBF2;--muted:#8FA6B6;
+  --display:"Chakra Petch","Rajdhani","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#040A12;--panel:#0A1726;--ink:#DCEBF2}}
+:root[data-theme="dark"]{--bg:#040A12;--panel:#0A1726;--ink:#DCEBF2}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg,canvas{max-width:100%}
+a{color:var(--cyan)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+.wrap{max-width:760px;margin:0 auto;padding:0 22px}
+
+.bar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 18px 10px;background:linear-gradient(var(--bg),rgba(4,10,18,0))}
+.bar .id{font-family:var(--display);font-weight:600;letter-spacing:.16em;font-size:13px;color:var(--muted)}
+.bar .id b{color:var(--cyan);font-weight:600}
+.lang{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.1em;color:var(--ink);background:var(--panel);border:1px solid var(--line);padding:6px 12px;cursor:pointer;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+
+.hero{position:relative;min-height:96svh;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:44px}
+.orb{position:absolute;inset:0;width:100%;height:74svh;display:block}
+.orb-fallback{display:none;position:absolute;left:50%;top:36svh;width:280px;height:280px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff 0 2%,var(--cyan) 6%,rgba(63,230,246,.25) 22%,transparent 60%);box-shadow:0 0 0 1px rgba(63,230,246,.4),0 0 0 36px rgba(4,10,18,1),0 0 0 37px rgba(255,138,61,.5)}
+.no-gl .orb{display:none}.no-gl .orb-fallback{display:block}
+.hero .wrap{position:relative;width:100%}
+.mark{font-family:var(--display);font-weight:700;font-size:clamp(46px,13vw,108px);letter-spacing:.3em;margin:0 -.3em 0 0;line-height:1;text-align:center;color:var(--ink);text-shadow:0 0 28px rgba(63,230,246,.35)}
+.sub{font-family:var(--display);font-weight:500;text-align:center;letter-spacing:.22em;font-size:13px;color:var(--cyan);margin:14px 0 26px}
+.lead{font-size:clamp(18px,4.4vw,22px);line-height:1.5;text-align:center;max-width:32ch;margin:0 auto}
+.hint{text-align:center;color:var(--muted);font-size:15px;margin:22px 0 0}
+.hint span{color:var(--orange)}
+
+section{padding:60px 0 8px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,5.6vw,32px);line-height:1.15;margin:0 0 8px;letter-spacing:.02em}
+.kicker{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.16em;color:var(--muted);margin:0 0 10px}
+p{margin:0 0 14px;max-width:62ch}
+.muted{color:var(--muted)}
+.lede{font-size:16px;color:var(--muted);max-width:56ch;margin-bottom:22px}
+
+.stages{display:flex;align-items:stretch;gap:10px;margin:8px 0 6px}
+.stage{flex:1;background:var(--panel);border:1px solid var(--line);padding:16px 12px;text-align:center;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.stage b{font-family:var(--display);font-weight:600;font-size:14px;display:block;margin-bottom:5px;color:var(--cyan)}
+.stage span{font-size:12.5px;color:var(--muted);display:block;line-height:1.4}
+.arrow{align-self:center;color:var(--line);font-size:20px;flex:0 0 auto}
+
+.tile{--c:14px;background:var(--line);padding:1px;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c))}
+.tile>.in{position:relative;height:100%;background:var(--panel);padding:16px 16px 14px;clip-path:inherit}
+.tile>.in::before{content:"";position:absolute;top:0;right:0;width:30px;height:2px;background:var(--cyan)}
+.tile>.in::after{content:"";position:absolute;top:0;right:0;width:2px;height:30px;background:var(--cyan)}
+.tile h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0 0 4px}
+.tile p{font-size:14.5px;margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
+@media (min-width:560px){.grid{grid-template-columns:1fr 1fr}}
+.grid.g3{margin-top:18px}
+@media (min-width:700px){.grid.g3{grid-template-columns:1fr 1fr 1fr}}
+
+.stat{background:var(--panel);border:1px solid var(--line);padding:16px}
+.stat b{display:block;font-family:var(--display);font-weight:700;font-size:26px;color:var(--cyan)}
+.stat span{font-size:14px;color:var(--muted)}
+.note{border-left:3px solid var(--orange);padding:10px 0 10px 14px;font-size:14.5px;color:var(--muted);margin:18px 0}
+
+.mood{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.mood:last-child{border-bottom:1px solid var(--line)}
+.dot{width:16px;height:16px;border-radius:50%;flex:0 0 auto;margin-top:4px;box-shadow:0 0 10px currentColor}
+.mood b{font-family:var(--display);font-weight:600;font-size:16px;display:block}
+.mood span{font-size:14.5px;color:var(--muted)}
+
+details{border-top:1px solid var(--line)}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;padding:15px 36px 15px 0;position:relative;font-family:var(--display);font-weight:600;font-size:17px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:4px;top:11px;font-size:22px;color:var(--cyan);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{font-size:15px;color:var(--muted);padding-bottom:6px}
+.acc{margin-top:18px}
+
+.about{display:grid;gap:16px}
+.open{margin-top:6px}
+.open li{margin-bottom:6px}
+.cta{display:inline-block;margin-top:8px;font-family:var(--display);font-weight:600;letter-spacing:.06em;color:var(--bg);background:var(--cyan);padding:12px 20px;text-decoration:none;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+footer{padding:52px 0 calc(38px + env(safe-area-inset-bottom));color:var(--muted);font-size:13.5px;text-align:center}
+footer .wave{display:flex;gap:4px;justify-content:center;height:22px;align-items:center;margin-bottom:14px}
+footer .wave i{width:3px;background:var(--cyan);opacity:.7;border-radius:2px}
+footer .verified{color:var(--orange);display:block;margin-top:6px;font-size:12.5px;letter-spacing:.04em}
+
+@media (prefers-reduced-motion:reduce){summary::after{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="id"><b>ATHENA</b> / SIDO Lyon 2026</div>
+  <button class="lang" id="lang" aria-label="Switch to English">EN</button>
+</div>
+
+<header class="hero">
+  <canvas class="orb" id="orb" aria-hidden="true"></canvas>
+  <div class="orb-fallback" aria-hidden="true"></div>
+  <div class="wrap">
+    <h1 class="mark">ATHENA</h1>
+    <div class="sub" data-en="PERSONAL AI SYSTEM">ASSISTANT IA PERSONNEL</div>
+    <p class="lead" data-en="Talk to it, it answers with its own opinion. It watches the home, protects it, switches the PC on and opens your apps.">On lui parle, elle répond avec son propre avis. Elle surveille la maison, la protège, allume le PC et ouvre vos applications.</p>
+    <p class="hint" data-en="Live demo on my phone: <span>just ask.</span>">Démo en direct sur mon téléphone : <span>demandez-moi.</span></p>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="identite">
+  <div class="kicker" data-en="IDENTITY">IDENTITÉ</div>
+  <h2 data-en="You talk, it answers — with an opinion">On lui parle, elle répond — avec un avis</h2>
+  <p data-en="The same personality on the voice, on the Hub command bar and on Telegram: warm, direct, a little teasing, capable of holding its own opinion and pushing back with a reason. It adapts how it speaks — spoken or written — without becoming a different assistant.">La même personnalité à la voix, sur la barre de commande du Hub et sur Telegram : douce, directe, un peu taquine, capable d’avoir son propre avis et de le défendre. Elle adapte sa façon de parler — à voix haute ou par écrit — sans jamais changer de personnalité.</p>
+  <p class="muted" data-en="It knows my full profile (7,846 characters, 21 sections): who I am, my work, how I work — plus 13 topics loaded only when I bring them up, so nothing sits half-remembered without being tracked.">Elle connaît mon profil complet (7 846 caractères, 21 sections) : identité, métier, façon de travailler — et 13 thèmes chargés seulement quand j’en parle, pour qu’aucune section ne dorme sans qu’on le sache.</p>
+
+  <div class="grid" style="margin-bottom:18px">
+    <div class="tile"><div class="in"><h3 data-en="A real conversation">Une vraie conversation</h3><p data-en="You talk to it naturally, as with a person. No fixed commands to learn.">On lui parle naturellement, comme à quelqu’un. Pas de commandes figées à apprendre.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Its own opinion">Son propre avis</h3><p data-en="Ask what it thinks and it answers — and it will disagree with you, giving its reasons.">Demandez-lui ce qu’elle en pense, elle répond — et vous contredit si besoin, en donnant ses raisons.</p></div></div>
+  </div>
+  <div class="stages">
+    <div class="stage"><b data-en="Perceives">Perçoit</b><span data-en="15 live data sources">15 sources en direct</span></div>
+    <div class="arrow">→</div>
+    <div class="stage"><b data-en="Decides">Décide</b><span data-en="conversation + memory">conversation + mémoire</span></div>
+    <div class="arrow">→</div>
+    <div class="stage"><b data-en="Acts">Agit</b><span data-en="confirmed gestures">gestes vérifiés</span></div>
+  </div>
+</section>
+
+<section id="securite">
+  <div class="kicker" data-en="PRESENCE & SECURITY">PRÉSENCE ET SÉCURITÉ</div>
+  <h2 data-en="It knows who’s in the room">Elle sait qui est dans la pièce</h2>
+  <div class="grid">
+    <div class="tile"><div class="in"><h3 data-en="Recognizes me">Me reconnaît</h3><p data-en="Face recognition through the camera: it knows when I’m there — and when I’m not.">Reconnaissance faciale par la caméra : elle sait quand je suis là, et quand je ne le suis pas.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Locks on a stranger">Verrouille sur un inconnu</h3><p data-en="An unknown face alone in the room: access to 25 personal folders is closed and the orb turns deep red.">Un visage inconnu seul dans la pièce : l’accès à 25 dossiers personnels se ferme et l’orbe passe au bordeaux.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Warns if it fails">Prévient en cas d’échec</h3><p data-en="If the lock couldn’t close, it tells me instead of pretending.">Si le verrou n’a pas pu fermer, elle le dit au lieu de faire semblant.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Watches the living room">Surveille le salon</h3><p data-en="2K pan-tilt camera steered from the Hub, motion detection with recording and alerts.">Caméra 2K orientable pilotée depuis le Hub, détection de mouvement avec enregistrement et alertes.</p></div></div>
+  </div>
+  <p class="note" data-en="Honest limit: it isn’t a real lock — the account still runs under my own Windows identity. A deliberate deterrent, with a manual unlock that needs neither the camera nor the Hub.">Limite assumée : ce n’est pas une vraie serrure — le compte tourne toujours sous mon identité Windows. Un trompe-l’œil volontaire, avec un déblocage manuel qui ne dépend ni de la caméra ni du Hub.</p>
+</section>
+
+<section id="taches">
+  <div class="kicker" data-en="TASKS & MONITORING">TÂCHES ET SURVEILLANCE</div>
+  <h2 data-en="It watches, and actually warns me">Elle surveille, et prévient vraiment</h2>
+  <div class="grid">
+    <div class="tile"><div class="in"><h3 data-en="11 watch profiles">11 surveillances prêtes</h3><p data-en="CPU/GPU overheating, printer issue, halfway or done, low phone or robot battery, network latency, new email, new Inkler draft, an app closing.">Surchauffe CPU/GPU, imprimante (incident, mi-parcours, fin), batterie faible téléphone ou robot, latence réseau, nouveau mail, nouveau brouillon Inkler, application fermée.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Alerts that follow me">Des alertes qui me suivent</h3><p data-en="In the room: spoken aloud. Away: Telegram and an iPhone notification, both tried — an alert is lost only if both fail.">Présent : dite à voix haute. Absent : Telegram et notification iPhone, les deux tentées — une alerte n’est perdue que si les deux échouent.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Reminders">Rappels</h3><p data-en="One-off or recurring (“every Monday at 8pm”), cancellable by name.">Ponctuels ou récurrents (« tous les lundis à 20 h »), annulables par leur nom.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="No empty promises">Pas de promesse en l’air</h3><p data-en="When it says “I’ll let you know”, it does: an empty promise is blocked by the server, not just by an instruction.">Quand elle dit « je te préviens », elle le fait : la promesse vide est bloquée par le serveur, pas seulement par une consigne.</p></div></div>
+  </div>
+  <p class="note" data-en="Autonomous routines: the mechanism exists (8 safety locks — measurable condition, allowed action, delay, expiry, attempt cap, loop guard, notification, final check) — but none is active. It always needs my explicit go-ahead to create one.">Routines autonomes : le mécanisme existe (8 verrous de sécurité — condition mesurable, action autorisée, délai, expiration, plafond d’essais, anti-boucle, notification, vérification finale) — mais aucune n’est active. Il faut toujours mon accord explicite pour en créer une.</p>
+</section>
+
+<section id="agit">
+  <div class="kicker" data-en="VERIFIED ACTIONS">ACTIONS VÉRIFIÉES</div>
+  <h2 data-en="What it can trigger">Ce qu’elle déclenche</h2>
+  <div class="grid">
+    <div class="tile"><div class="in"><h3 data-en="Switch the PC on by voice">Allumer le PC à la voix</h3><p data-en="The PC can be off: ATHENA wakes it up, by voice or from Telegram.">Le PC peut être éteint : ATHENA le rallume, à la voix ou depuis Telegram.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Open and close apps">Ouvrir et fermer des applis</h3><p data-en="Launch an app or a web page on request, close an app — and check the window actually appeared or disappeared.">Lance une application ou une page à la demande, ferme une application — et vérifie que la fenêtre est bien apparue ou partie.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Lighting">Éclairage</h3><p data-en="RGB lighting on or off, with read-back to confirm.">RGB allumé ou éteint, avec relecture pour confirmer.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Home robot">Robot domestique</h3><p data-en="Start or stop Skynet, the vacuum.">Lancer ou arrêter Skynet, le robot aspirateur.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Media & TV">Média & TV</h3><p data-en="Control music playback, turn the TV on.">Piloter la musique, allumer la télé.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Sequences">Scénarios</h3><p data-en="Create multi-step scenarios chaining several actions.">Créer des scénarios enchaînant plusieurs gestes.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Lists & memory">Listes & mémoire</h3><p data-en="Manage lists and tasks; remember, forget or correct a fact about me.">Gérer mes listes et tâches ; retenir, oublier ou corriger un fait sur moi.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Writing, on approval">Écriture, sur validation</h3><p data-en="Send an email or create a document — always with manual confirmation, never by voice alone.">Envoyer un mail ou créer un document — toujours avec confirmation manuelle, jamais par la seule voix.</p></div></div>
+  </div>
+  <p class="note" data-en="Three gestures are checked for certain (window visible or gone, Spotify state, RGB read-back). For the rest, it stays honest: “I don’t know if that worked” rather than inventing a success.">Trois gestes sont vérifiés à coup sûr (fenêtre visible ou absente, état Spotify, relecture RGB). Pour le reste, elle reste honnête : « je ne sais pas si ça a marché » plutôt que d’inventer un succès.</p>
+</section>
+
+<section id="percoit">
+  <div class="kicker" data-en="LIVE AWARENESS">PERCEPTION EN DIRECT</div>
+  <h2 data-en="What it reads, right now">Ce qu’elle lit, en ce moment</h2>
+  <p class="lede" data-en="15 tools, checked live, no assumptions.">15 outils, vérifiés en direct, aucune supposition.</p>
+  <div class="grid">
+    <div class="tile"><div class="in"><h3 data-en="Machine">Machine</h3><p data-en="CPU, GPU, RAM, disks, cooling (fans, pump), real network throughput and latency.">Processeur, carte graphique, mémoire, disques, refroidissement (ventilateurs, pompe), débit et latence réseau réels.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Home">Maison</h3><p data-en="Bambu Lab A1 printer (status, progress, temperatures), Skynet robot vacuum (battery, mission, errors), camera feed.">Imprimante Bambu Lab A1 (état, avancement, températures), robot Skynet (batterie, mission, erreurs), flux caméra.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Digital life">Vie numérique</h3><p data-en="Outlook inbox, Inkler drafts and appointments, Spotify, crypto prices, weather at home and at my phone’s location.">Boîte mail Outlook, brouillons et rendez-vous Inkler, Spotify, cours des cryptos, météo chez moi et à la position de mon téléphone.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Open apps">Applications ouvertes</h3><p data-en="Which apps are running right now on the PC.">Quelles applications tournent actuellement sur le PC.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="My phone">Mon téléphone</h3><p data-en="Battery level, checked continuously.">Niveau de batterie, mesuré en continu.</p></div></div>
+  </div>
+</section>
+
+<section id="memoire">
+  <div class="kicker" data-en="MEMORY & RELIABILITY">MÉMOIRE ET FIABILITÉ</div>
+  <h2 data-en="It remembers, and says how well">Elle retient, et dit à quel point</h2>
+  <div class="grid g3">
+    <div class="stat"><b>1 118</b><span data-en="exchanges kept since Sept 1, searchable, never purged">échanges gardés depuis le 1ᵉʳ sept., cherchables, jamais purgés</span></div>
+    <div class="stat"><b>67 %</b><span data-en="measured reliability on 6 actions this week — too small a sample for a real conclusion, said plainly">fiabilité mesurée sur 6 actions cette semaine — échantillon trop faible pour conclure, et c’est dit</span></div>
+    <div class="stat"><b>30 j</b><span data-en="it keeps a failure with its cause, then lets it go so it doesn’t become superstitious">elle garde un échec avec sa cause, puis l’oublie pour ne pas devenir superstitieuse</span></div>
+  </div>
+  <p class="muted" style="margin-top:14px" data-en="Our working relationship is described in facts — 568 exchanges, 16 days, 6 projects — and familiarity never opens up extra permissions. Full backup every night at 11pm, verified by an actual restore.">Notre relation de travail est décrite en faits — 568 échanges, 16 jours, 6 projets — et la familiarité n’ouvre jamais la moindre permission. Sauvegarde complète chaque soir à 23 h, vérifiée par une restauration réelle.</p>
+</section>
+
+<section id="humeurs">
+  <div class="kicker" data-en="MOODS">HUMEURS</div>
+  <h2 data-en="Measured moods, not performed ones">Des humeurs mesurées, pas jouées</h2>
+  <p class="lede" data-en="The orb’s color always comes from something it measured — never invented.">La couleur de l’orbe vient toujours d’un fait mesuré — jamais inventé.</p>
+  <div class="mood"><span class="dot" style="background:#3FE6F6;color:#3FE6F6"></span><div><b data-en="Neutral · blue/cyan">Neutre · bleu/cyan</b><span data-en="the baseline state">l’état de base</span></div></div>
+  <div class="mood"><span class="dot" style="background:#FFC15E;color:#FFC15E"></span><div><b data-en="Pleased · amber">Contente · ambre</b><span data-en="after I’ve been away 8 hours or more">après mon retour, absent ≥ 8 h</span></div></div>
+  <div class="mood"><span class="dot" style="background:#8E8CF0;color:#8E8CF0"></span><div><b data-en="Sorry · blue-violet">Désolée · bleu-violet</b><span data-en="on a confirmed printer failure">sur un échec d’impression constaté</span></div></div>
+  <div class="mood"><span class="dot" style="background:#E0546B;color:#E0546B"></span><div><b data-en="Angry · deep red — the only mood that changes her voice">En colère · bordeaux — la seule humeur qui change sa voix</b><span data-en="on an unknown face detected">sur un visage inconnu détecté</span></div></div>
+  <p class="muted" style="margin-top:14px" data-en="The orb also tracks my attention, through three levels of opacity.">L’orbe suit aussi mon attention, à travers trois paliers d’opacité.</p>
+</section>
+
+<section id="acces">
+  <div class="kicker" data-en="WHERE TO TALK TO IT">OÙ LUI PARLER</div>
+  <h2 data-en="Voice, Hub, or Telegram">À la voix, sur le Hub, ou sur Telegram</h2>
+  <div class="grid">
+    <div class="tile"><div class="in"><h3 data-en="Voice">À voix haute</h3><p data-en="Wake word “Athéna” or “Bonjour Athéna”, then a normal conversation.">Mot d’éveil « Athéna » ou « Bonjour Athéna », puis une conversation normale.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Hub bar">Barre du Hub</h3><p data-en="Typed commands on the dashboard.">Commandes tapées sur le tableau de bord.</p></div></div>
+    <div class="tile"><div class="in"><h3 data-en="Telegram">Telegram</h3><p data-en="Works even with the PC off — conversation, memory, lists, reminders, monitoring. PC gestures (RGB, apps, robot, TV, mail, docs) need the PC on.">Fonctionne même PC éteint — conversation, mémoire, listes, rappels, surveillances. Les gestes sur le PC (RGB, applis, robot, TV, mail, documents) demandent le PC allumé.</p></div></div>
+  </div>
+  <p class="muted" style="margin-top:14px" data-en="Because it lives on its own server, it stays reachable when the PC is off — and can switch the PC on, by voice or from Telegram.">Comme elle vit sur son propre serveur, elle reste joignable PC éteint — et peut allumer le PC, à la voix ou depuis Telegram.</p>
+</section>
+
+<section id="technique">
+  <div class="kicker" data-en="FOR ENGINEERS">POUR LES INGÉNIEURS</div>
+  <h2 data-en="How it’s built">Comment c’est construit</h2>
+  <p class="muted" data-en="Tap to expand.">Touchez pour déplier.</p>
+  <div class="acc">
+    <details><summary data-en="Models">Modèles</summary>
+      <p data-en="A lighter model handles the 15 read-only sensors. Conversation — at the machine and on Telegram — runs on a stronger model.">Un modèle plus léger traite les 15 lectures de capteurs. La conversation — au poste et sur Telegram — tourne sur un modèle plus capable.</p></details>
+    <details><summary data-en="Hardware and hosting">Matériel et hébergement</summary>
+      <p data-en="ATHENA lives on a dedicated appliance — a laptop repurposed as a headless Ubuntu Server box — separate from the PC. That’s why it stays reachable and can wake the PC.">ATHENA vit sur une appliance dédiée — un portable reconverti en serveur Ubuntu Server sans écran — séparée du PC. C’est ce qui lui permet de rester joignable et de rallumer le PC.</p></details>
+    <details><summary data-en="Audio pipeline">Chaîne audio</summary>
+      <p data-en="The wake-word decision window is read from the model at load time, never hardcoded. Anti-feedback gate: only the detector is muted, not the audio stream; it closes before the first spoken sample, resets on reopen, keeps a tail guard, and reopens even if speech synthesis fails.">La fenêtre de décision du mot d’activation est lue dans le modèle au chargement, jamais codée en dur. Porte anti-larsen : seul le détecteur est coupé, pas le flux audio ; elle se ferme avant le premier son, se réinitialise à la réouverture, garde une marge de sécurité, et se rouvre même si la synthèse vocale plante.</p></details>
+    <details><summary data-en="Interface">Interface</summary>
+      <p data-en="Web dashboard with a WebGL orb, live tiles for every sensor, and an embedded camera and chart view. The same interface runs on desktop and phone.">Tableau de bord web avec orbe en shader WebGL, tuiles en direct pour chaque capteur, vues caméra et graphiques intégrées. La même interface tourne sur ordinateur et sur téléphone.</p></details>
+    <details><summary data-en="Security">Sécurité</summary>
+      <p data-en="Firewall limited to one client machine, key-only SSH, automatic updates. Token-authenticated API. Writes (email, documents) always need a manual confirmation, never voice alone.">Pare-feu limité à une seule machine cliente, SSH par clé uniquement, mises à jour automatiques. API authentifiée par jeton. Les écritures (mail, documents) demandent toujours une confirmation manuelle, jamais la seule voix.</p></details>
+    <details><summary data-en="How it was built">Méthode de développement</summary>
+      <p data-en="Product design, architecture and integrations are mine. Implementation is done by directing AI coding agents, with systematic verification before anything ships.">Conception produit, architecture et intégrations sont les miennes. L’implémentation se fait en pilotant des agents de code IA, avec vérification systématique avant chaque mise en service.</p></details>
+  </div>
+</section>
+
+<section id="auteur">
+  <div class="kicker" data-en="WHO BUILT IT">QUI L’A CONSTRUIT</div>
+  <h2 data-en="David Richard">David Richard</h2>
+  <div class="about">
+    <p data-en="Professional tattoo artist for 8 years and self-taught full-stack developer, near Lyon.">Tatoueur professionnel depuis 8 ans et développeur full-stack autodidacte, près de Lyon.</p>
+    <p data-en="Solo founder and developer of <a href='https://inklerapp.com'>Inkler</a>, a SaaS CRM for tattoo artists. ATHENA is my personal R&amp;D project.">Fondateur et seul développeur d’<a href="https://inklerapp.com">Inkler</a>, un CRM SaaS pour tatoueurs. ATHENA est mon projet de R&amp;D personnel.</p>
+    <div>
+      <p style="margin-bottom:4px" data-en="Open to, fully remote:">Ouvert à, en full remote :</p>
+      <ul class="open">
+        <li data-en="freelance AI work">missions freelance en IA</li>
+        <li data-en="AI model training and evaluation">entraînement et évaluation de modèles d’IA</li>
+        <li data-en="AI + connected-device prototyping">prototypage IA + objets connectés</li>
+      </ul>
+    </div>
+    <a class="cta" href="https://inklerapp.com" data-en="See Inkler">Voir Inkler</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wave" id="wave" aria-hidden="true"></div>
+  <div>ATHENA · David Richard · 2026</div>
+  <span class="verified" data-en="Everything above checked live, not copied from an old note.">Tout ce qui précède est vérifié en direct, pas recopié d’une note ancienne.</span>
+</footer>
+
+<script>
+(function(){
+  var btn=document.getElementById('lang'), en=false;
+  var nodes=[].slice.call(document.querySelectorAll('[data-en]'));
+  nodes.forEach(function(n){n.setAttribute('data-fr',n.innerHTML)});
+  btn.addEventListener('click',function(){
+    en=!en;
+    nodes.forEach(function(n){n.innerHTML=n.getAttribute(en?'data-en':'data-fr')});
+    document.documentElement.lang=en?'en':'fr';
+    btn.textContent=en?'FR':'EN';
+    btn.setAttribute('aria-label',en?'Passer en français':'Switch to English');
+    try{localStorage.setItem('athena-lang',en?'en':'fr')}catch(e){}
+  });
+  try{if(localStorage.getItem('athena-lang')==='en')btn.click()}catch(e){}
+
+  var w=document.getElementById('wave');
+  for(var i=0;i<28;i++){var b=document.createElement('i');b.style.height=(4+Math.abs(Math.sin(i*.7)*Math.cos(i*.23))*18)+'px';w.appendChild(b)}
+
+  var cv=document.getElementById('orb');
+  var gl=cv.getContext('webgl',{antialias:true,alpha:false});
+  if(!gl){document.body.classList.add('no-gl');return}
+  var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fs=[
+  'precision mediump float;uniform vec2 r;uniform float t;',
+  'void main(){',
+  ' vec2 uv=(gl_FragCoord.xy-vec2(.5*r.x,.5*r.y))/min(r.x,r.y);',
+  ' float d=length(uv);float a=atan(uv.y,uv.x);',
+  ' vec3 cy=vec3(.25,.9,.965);vec3 og=vec3(1.,.54,.24);',
+  ' vec3 col=vec3(0.);',
+  ' float pulse=1.+.12*sin(t*1.7);',
+  ' col+=cy*exp(-d*d*42./pulse)*1.3+vec3(1.)*exp(-d*d*260./pulse)*.8;',
+  ' col+=cy*exp(-d*5.5)*.16;',
+  ' for(int i=0;i<4;i++){',
+  '  float fi=float(i);',
+  '  float rad=.15+fi*.07;',
+  '  float dir=mod(fi,2.)<.5?1.:-1.;',
+  '  float seg=smoothstep(.45,.55,sin(a*(2.+fi)+t*dir*(.35+fi*.1))*.5+.5);',
+  '  float g=abs(d-rad);',
+  '  float line=smoothstep(.004+fi*.001,0.,g);',
+  '  float glow=exp(-g*70.)*.22;',
+  '  vec3 c=cy; if(i==2){c=og;}',
+  '  col+=c*(line+glow)*(.25+.75*seg);',
+  ' }',
+  ' float tick=step(.82,fract(a/6.2831853*90.+t*.02))*smoothstep(.006,0.,abs(d-.43));',
+  ' col+=cy*tick*.7;',
+  ' float arc=smoothstep(.004,0.,abs(d-.47))*step(.6,sin(a-t*.3));',
+  ' col+=og*arc*.8;',
+  ' col=1.-exp(-col*1.4);',
+  ' col+=vec3(.016,.039,.071);',
+  ' gl_FragColor=vec4(col,1.);',
+  '}'].join('\n');
+  function sh(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return s}
+  var pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){document.body.classList.add('no-gl');return}
+  gl.useProgram(pr);
+  var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  var ur=gl.getUniformLocation(pr,'r'),ut=gl.getUniformLocation(pr,'t');
+  function size(){var dpr=Math.min(window.devicePixelRatio||1,2);cv.width=cv.clientWidth*dpr;cv.height=cv.clientHeight*dpr;gl.viewport(0,0,cv.width,cv.height)}
+  size();window.addEventListener('resize',size);
+  var still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t0=performance.now();
+  function frame(now){
+    gl.uniform2f(ur,cv.width,cv.height);
+    gl.uniform1f(ut,still?4.:(now-t0)/1000);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    if(!still)requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
